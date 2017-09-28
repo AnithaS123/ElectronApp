@@ -55,3 +55,16 @@ This file is part of the Innovation LAB - Offline Bot.
 .carousel-indicators .active {
 background: #428bca;
 }
+
+.airlinePadding {
+    padding: 10px 0px
+}
+
+.pmd-card-inverseblue {
+    background-color: #1E90FF;
+    color: #eceeef
+}
+
+.text-color-red{
+    color: red;
+}

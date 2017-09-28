@@ -22,8 +22,8 @@ function createWindow() {
   const trayControl = new appTray(iconPath)
 
   win = new BrowserWindow({
-    width: 400,
-    height: 650,
+    width: 1024,
+    height: 1024,
     frame: false,
     webPreferences: {
       devTools: true,

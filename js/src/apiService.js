@@ -51,6 +51,9 @@ define(['jquery', 'settings', 'utils', 'messageTemplates', 'cards', 'uuid'],
 
 						// airline onboarding
 						let isAirlineBoardingPass = false;
+						let isAirlineCheckin = false;
+						let isAirlingFlightUpdate = false;
+
 						//To find Card || Carousel
 						let count = 0;
 						let hasbutton;
@@ -59,8 +62,7 @@ define(['jquery', 'settings', 'utils', 'messageTemplates', 'cards', 'uuid'],
 							// console.log("for airline service"+ response);
 
 							for (let i in response.result.fulfillment.messages) {
-									debugger;									
-								
+								debugger;
 								if (response.result.fulfillment.messages[i].type == 0) {
 									let cardHTML = cards({
 										"payload": response.result.fulfillment.messages[i].speech,
@@ -88,14 +90,28 @@ define(['jquery', 'settings', 'utils', 'messageTemplates', 'cards', 'uuid'],
 								// 	isQuickReply = (response.result.fulfillment.messages[i].payload.facebook.quick_replies.length > 0) ? true : false;
 								// 	console.log(isQuickReply);
 								// }
-								// airline
-								if ((response.result.fulfillment.messages[i].type == 4) && (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type ==='airline_boardingpass')) {
-								// if (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type ==='airline_boardingpass') {
-									debugger;
-									console.log(response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type);
-									// isAirlineBoardingPass = (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.boarding_pass.length > 0) ? true : false;
-									isAirlineBoardingPass = (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.boarding_pass.length > 0) ? true : false;
-									console.log(isAirlineBoardingPass);
+								// airline Boarding Pass
+								if (response.result.fulfillment.messages[i].type == 4) {
+									// if (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type ==='airline_boardingpass') {
+									if ((response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type === 'airline_boardingpass')) {
+										console.log(response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type);
+										// isAirlineBoardingPass = (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.boarding_pass.length > 0) ? true : false;
+										isAirlineBoardingPass = (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.boarding_pass.length > 0) ? true : false;
+										console.log(isAirlineBoardingPass);
+									}
+									//Airline checkin template
+									if ((response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type === 'airline_checkin')) {
+										console.log(response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type);
+										isAirlineCheckin = (response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.flight_info.length > 0) ? true : false;
+										console.log(isAirlineCheckin);
+									}
+									//Airline flight update template
+									if ((response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type === 'airline_update')) {
+										console.log(response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.template_type);
+										// isAirlingFlightUpdate = response.result.fulfillment.messages[i].payload.facebook.attachment.payload.message.attachment.payload.update_flight_info;
+										isAirlingFlightUpdate = true;
+										console.log(isAirlingFlightUpdate);
+									}
 
 								}
 
@@ -161,29 +177,44 @@ define(['jquery', 'settings', 'utils', 'messageTemplates', 'cards', 'uuid'],
 
 						// airline Boarding
 						if (isAirlineBoardingPass) {
-							if (count == 1) {
-								let boardingPass = cards({
-									"payload": response.result.fulfillment.messages,
-									"senderName": config.botTitle,
-									"senderAvatar": config.botAvatar,
-									"time": utils.currentTime(),
-									"buttons": hasbutton,
-									"className": ''
-								}, "card");
-								callback(null, boardingPass);
-							} else {
-								let boardingPassHTML = cards({
-
-									"payload": response.result.fulfillment.messages,
-									"senderName": config.botTitle,
-									"senderAvatar": config.botAvatar,
-									"time": utils.currentTime(),
-									"buttons": hasbutton,
-									"className": ''
-
-								}, "carousel");
-								callback(null, boardingPassHTML);
-							}
+							let boardingPassHTML = cards({
+								"payload": response.result.fulfillment.messages,
+								"senderName": config.botTitle,
+								"senderAvatar": config.botAvatar,
+								"time": utils.currentTime(),
+								"buttons": hasbutton,
+								"className": ''
+							}, "airlineBoarding");
+							callback(null, boardingPassHTML);
+							// }
+						}
+						// -----------------------------------
+						// airline Checkin
+						if (isAirlineCheckin) {
+							let CheckinHTML = cards({
+								"payload": response.result.fulfillment.messages,
+								"senderName": config.botTitle,
+								"senderAvatar": config.botAvatar,
+								"time": utils.currentTime(),
+								"buttons": hasbutton,
+								"className": ''
+							}, "airlineCheckin");
+							callback(null, CheckinHTML);
+							// }
+						}
+						// -----------------------------------
+						// airline flight update
+						if (isAirlingFlightUpdate) {
+							let CheckinHTML = cards({
+								"payload": response.result.fulfillment.messages,
+								"senderName": config.botTitle,
+								"senderAvatar": config.botAvatar,
+								"time": utils.currentTime(),
+								"buttons": hasbutton,
+								"className": ''
+							}, "airlineFlightUpdate");
+							callback(null, CheckinHTML);
+							// }
 						}
 						// -----------------------------------
 					},
